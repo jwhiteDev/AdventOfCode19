@@ -8,14 +8,14 @@ namespace AdventOfCode19
     {
         public override void SolvePart1()
         {
-            var temp = new List<int> { 1, 1, 1, 4, 99, 5, 6, 0, 99 };
+            //var temp = new List<int> { 1, 1, 1, 4, 99, 5, 6, 0, 99 };
             //var result = IntcodeComputer.Run(temp);
 
             /*
              * before running the program, 
              * replace position 1 with the value 12 and replace position 2 with the value 2.
              */
-            var list = InputArrayAsList;
+            var list = InputDataAsList;
             list[1] = 12;
             list[2] = 2;
 
@@ -33,7 +33,7 @@ namespace AdventOfCode19
             {
                 for(verb = 0; verb<99; verb++)
                 {
-                    var list = InputArrayAsList;
+                    var list = InputDataAsList;
                     list[1] = noun;
                     list[2] = verb;
 
