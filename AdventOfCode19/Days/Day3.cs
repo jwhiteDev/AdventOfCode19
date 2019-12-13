@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Text;
+using System.Xml.Schema;
 
 namespace AdventOfCode19
 {
@@ -28,35 +30,88 @@ namespace AdventOfCode19
 
         }
 
+        public override void SolvePart2()
+        {
+            //string first = "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51";
+            //string second = "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7";
+            //string first = "R8,U5,L5,D3";
+            //string second = "U7,R6,D4,L4";
+            //_redWire = new Wire(first.Split(","));
+            //_blueWire = new Wire(second.Split(","));
+
+            _redWire = new Wire(InputData[0].Split(","));
+            _blueWire = new Wire(InputData[1].Split(","));
+
+            var distance = FindMinSteps();
+            Console.WriteLine($"Shortest Steps equals {distance}");
+        }
+
         private int FindMinDistance()
         {
             var minDistance = -1;
-            List<Point> intersects = new List<Point>();
-            foreach(Line red in _redWire.Lines)
+            var intersections = FindIntersections();
+            foreach(Point x in intersections)
+            {
+                int dist = Math.Abs(x.X) + Math.Abs(x.Y);
+                if (minDistance == -1)
+                    minDistance = dist;
+                else
+                    minDistance = dist < minDistance ? dist : minDistance;
+            }
+            
+            return minDistance;
+        }
+
+        private int FindMinSteps()
+        {
+            int steps = 0;
+            foreach (Line red in _redWire.Lines)
             {
                 foreach (Line blue in _blueWire.Lines)
                 {
                     var intersect = red.GetIntersect(blue);
                     int dist = Math.Abs(intersect.X) + Math.Abs(intersect.Y);
-                    if (dist == 0)
+                    if (dist != 0)
                     {
-                        continue;
+                        //we know we have an intersection
+                        red.End = intersect;
+                        blue.End = intersect;
+                        int totalSteps = red.Length + blue.Length;
+                        if (steps == 0)
+                        {
+                            steps = totalSteps;
+                        }
+                        else if(steps > totalSteps)
+                        {
+                            steps = totalSteps;
+                        }
                     }
-                    else if (minDistance == -1 && dist != 0)
-                        minDistance = dist;
-                    else 
-                        minDistance = dist < minDistance ? dist : minDistance;
-                    
                 }
             }
-            
-            return minDistance;
+
+            return steps;
+        }
+
+        private List<Point> FindIntersections()
+        {
+            var intersections = new List<Point>();
+
+            foreach (Line red in _redWire.Lines)
+            {
+                foreach (Line blue in _blueWire.Lines)
+                {
+                    var intersect = red.GetIntersect(blue);
+                    int dist = Math.Abs(intersect.X) + Math.Abs(intersect.Y);
+                    if (dist != 0)
+                    {
+                        intersections.Add(intersect);
+                    }
+                }
+            }
+            return intersections;
+
         }
         
-        public override void SolvePart2()
-        {
-            Console.Write("Part 2 Not Implemented Yet");
-        }
     }
 
     public class Wire
@@ -74,11 +129,13 @@ namespace AdventOfCode19
         {
             
             Point start = new Point(0, 0);
+            Line previous = null;
             foreach (string x in points)
             {
                 var nextPoint = GetNextPoint(start, x);
-                lines.Add(new Line(start, nextPoint));
-                
+                var newLine = new Line(start, nextPoint, previous);
+                lines.Add(newLine);
+                previous = newLine;
                 start = nextPoint;
             }
         }
@@ -113,12 +170,12 @@ namespace AdventOfCode19
 
     public class Line
     {
-        private Point Start
+        public Point Start
         {
             get;
             set;
         }
-        private Point End
+        public Point End
         {
             get;
             set;
@@ -129,11 +186,40 @@ namespace AdventOfCode19
             set;
         }
 
-        public Line(Point start, Point end)
+        private Line _parent = null;
+
+        public int Length
+        {
+            get
+            {
+
+                int _length = 0;
+                int min = 0;
+                int max = 0;
+                if (Direction == "X")
+                {
+                    min = Math.Min(Start.X, End.X);
+                    max = Math.Max(Start.X, End.X);
+                }
+                else
+                {
+                    min = Math.Min(Start.Y, End.Y);
+                    max = Math.Max(Start.Y, End.Y);
+                }
+
+                _length = max - min;
+                if (_parent != null)
+                    _length += _parent.Length;
+                
+                return _length;
+            }
+        }
+        public Line(Point start, Point end, Line parent)
         {
             Start = start;
             End = end;
             Direction = start.Y == end.Y ? "X" : "Y";
+            _parent = parent;
         }
 
         public Point GetIntersect(Line other)
