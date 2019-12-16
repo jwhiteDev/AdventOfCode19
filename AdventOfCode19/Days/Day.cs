@@ -8,18 +8,28 @@ namespace AdventOfCode19
 {
     abstract class Day
     {
+        string _filepath;
         private string[] _inputData;
 
         public List<int> InputDataAsInt => _inputData.Select(x => int.Parse(x)).ToList();
 
         public List<int> InputDataAsList => _inputData[0].Split(",").Select(int.Parse).ToList();
 
-        public List<string> InputData => _inputData.ToList();
+        public List<string> InputData
+        {
+            get
+            {
+                if(_inputData == null)
+                {
+                    _inputData = File.ReadAllLines(_filepath);
+                }
+                return _inputData.ToList();
+            }
+        }
 
         public Day()
         {
-            var _filepath = $"Data/{this.GetType().Name}.txt";
-            _inputData = File.ReadAllLines(_filepath);
+            _filepath = $"Data/{this.GetType().Name}.txt";
         }
 
         public abstract void SolvePart1();
