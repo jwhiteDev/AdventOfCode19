@@ -1,41 +1,104 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace AdventOfCode19
 {
-    public static class IntcodeComputer
+    public class IntcodeComputer
     {
-        public static List<int> Run(List<int> program)
+        private static List<int> program = new List<int>();
+        public IntcodeComputer(List<int> input)
         {
-            int index = 0;
+            program = input;
+        }
+
+        public List<int> Run()
+        {
+            int i = 0;
             bool exitFlag = false;
-            while(index < program.Count && !exitFlag)
+            while(i < program.Count && !exitFlag)
             {
-                int op = program[index];
-                int x = program[index + 1];
-                int y = program[index + 2];
-                int z = program[index + 3];
+                
+                var opcode = program[i]+"";
+                //process Opcode
+                int op = 0;
+                var paramModes = ProcessOpcode(program[i] + "", ref op);
+                
+                int x;
+                int y;
+                int z;
                 switch (op)
                 {
                     case 1:
-                        program[z] = program[x] + program[y];
+                        x = GetParameter(i + 1, 0, paramModes);
+                        y = GetParameter(i + 2, 1, paramModes);
+                        z = program[i + 3];
+                        program[z] = x + y;
+                        i = i + 4;
                         break;
                     case 2:
-                        program[z] = program[x] * program[y];
+                        x = GetParameter(i + 1, 0, paramModes);
+                        y = GetParameter(i + 2, 1, paramModes);
+                        z = program[i + 3];
+                        program[z] = x * y;
+                        i = i + 4;
+                        break;
+                    case 3:
+                        Console.Write("Please Enter a Diagnostic: ");
+                        var res = Console.ReadKey();
+                        //validate input
+
+                        z = program[i + 1]; //find index to store input
+                        program[z] = int.Parse(res.KeyChar+"");
+                        Console.WriteLine();
+                        i = i + 2;
+                        break;
+                    case 4:
+                        //Output the value of its parameter
+
+                        z = GetParameter(i + 1, 0, paramModes);
+                        Console.WriteLine($"Diagnostic Results for index {i}: {z}");
+                        i += 2;
                         break;
                     case 99:
                         exitFlag = true;
                         break;
                     default:
-                        Console.WriteLine($"Errors at position[{index}] numFound: {op}");
+                        Console.WriteLine($"Errors at position[{i}] numFound: {opcode}, {op}");
                         break;
                 }
-                index = index + 4;
+                
             }
 
             return program;
         }
 
+        private int GetParameter(int index, int param, List<int> paramModes)
+        {
+            if(paramModes.Count == 0 || paramModes[param] == 0)
+            {
+                return program[program[index]];
+            }
+            return program[index];
+        }
+
+        private List<int> ProcessOpcode(string input, ref int op)
+        {
+            if(input.Length<= 2)
+            {
+                op = int.Parse(input);
+                return new List<int>();
+            }
+
+            op = int.Parse(input.Substring(input.Length - 2, 2));
+            input = input.Substring(0, input.Length - 2);
+
+            var result = input.Select(x => int.Parse(x.ToString())).ToList();
+            result.Reverse();
+            result.Add(0); //I guess we expect an additional 0 for the non-existant number
+            return result;
+        }
     }
+
 }

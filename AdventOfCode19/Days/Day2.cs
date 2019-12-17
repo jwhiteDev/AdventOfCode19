@@ -19,7 +19,8 @@ namespace AdventOfCode19
             list[1] = 12;
             list[2] = 2;
 
-            var result = IntcodeComputer.Run(list);
+            var computer = new IntcodeComputer(list);
+            var result = computer.Run();
             Console.WriteLine(result[0]);
         }
 
@@ -37,7 +38,8 @@ namespace AdventOfCode19
                     list[1] = noun;
                     list[2] = verb;
 
-                    var res = IntcodeComputer.Run(list);
+                    var computer = new IntcodeComputer(list);
+                    var res = computer.Run();
                     if (res[0] == 19690720)
                     {
                         Console.WriteLine($"Noun == {noun} and Verb == {verb}");

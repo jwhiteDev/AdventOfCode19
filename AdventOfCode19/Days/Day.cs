@@ -11,9 +11,9 @@ namespace AdventOfCode19
         string _filepath;
         private string[] _inputData;
 
-        public List<int> InputDataAsInt => _inputData.Select(x => int.Parse(x)).ToList();
+        public List<int> InputDataAsInt => InputData.Select(x => int.Parse(x)).ToList();
 
-        public List<int> InputDataAsList => _inputData[0].Split(",").Select(int.Parse).ToList();
+        public List<int> InputDataAsList => InputData[0].Split(",").Select(int.Parse).ToList();
 
         public List<string> InputData
         {
