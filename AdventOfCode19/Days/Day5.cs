@@ -22,7 +22,18 @@ namespace AdventOfCode19
 
         public override void SolvePart2()
         {
-            Console.WriteLine("Part 2 not implemented");
+            /*
+            var list = new List<int>() { 3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9 };
+            var list2 = new List<int>() { 3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9 };
+            var list3 = new List<int>() { 3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1 };
+            var list4 = new List<int>() { 3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1 };
+            */
+
+            var list = InputDataAsList;
+            var computer = new IntcodeComputer(list);
+            var result = computer.Run();
+
+            Console.WriteLine("Diagnostics Complete");
 
         }
     }

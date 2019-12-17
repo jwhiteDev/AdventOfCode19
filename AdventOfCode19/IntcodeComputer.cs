@@ -61,6 +61,30 @@ namespace AdventOfCode19
                         Console.WriteLine($"Diagnostic Results for index {i}: {z}");
                         i += 2;
                         break;
+                    case 5: //jump-if-true
+                        x = GetParameter(i + 1, 0, paramModes);
+                        y = GetParameter(i + 2, 1, paramModes);
+                        i = x != 0 ? y : i+3;
+                        break;
+                    case 6: //jump-if-false
+                        x = GetParameter(i + 1, 0, paramModes);
+                        y = GetParameter(i + 2, 1, paramModes);
+                        i = x == 0 ? y : i + 3;
+                        break;
+                    case 7: // less than parameter
+                        x = GetParameter(i + 1, 0, paramModes);
+                        y = GetParameter(i + 2, 1, paramModes);
+                        z = program[i + 3];
+                        program[z] = x < y ? 1 : 0;
+                        i += 4;
+                        break;
+                    case 8: //equal parameter
+                        x = GetParameter(i + 1, 0, paramModes);
+                        y = GetParameter(i + 2, 1, paramModes);
+                        z = program[i + 3];
+                        program[z] = x == y ? 1 : 0;
+                        i += 4;
+                        break;
                     case 99:
                         exitFlag = true;
                         break;

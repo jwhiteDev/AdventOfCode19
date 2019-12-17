@@ -39,7 +39,7 @@ namespace AdventOfCode19
         {
             var problemName = this.GetType().Name;
             Console.WriteLine($"Solving {problemName}: Part 1");
-            SolvePart1();
+            //SolvePart1();
 
             Console.WriteLine($"Solving {problemName}: Part 2");
             SolvePart2();
